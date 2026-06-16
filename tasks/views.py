@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .models import Project, Task
+from rest_framework import generics, permissions
+from .serializers import ProjectSerializer, TaskSerializer
 
 @login_required
 def dashboard(request):
@@ -117,3 +119,34 @@ def task_delete(request, pk):
         task.delete()
         return redirect('task_list')
     return render(request, 'tasks/task_confirm_delete.html', {'task': task})
+# API Views
+class ProjectListCreateAPI(generics.ListCreateAPIView):
+    serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Project.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+class ProjectDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Project.objects.filter(owner=self.request.user)
+
+class TaskListCreateAPI(generics.ListCreateAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(project__owner=self.request.user)
+
+class TaskDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(project__owner=self.request.user)
