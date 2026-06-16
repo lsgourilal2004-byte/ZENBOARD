@@ -10,7 +10,15 @@ from .serializers import ProjectSerializer, TaskSerializer
 def dashboard(request):
     projects = Project.objects.filter(owner=request.user)
     tasks = Task.objects.filter(project__owner=request.user)
-    context = {'projects': projects, 'tasks': tasks}
+    context = {
+        'projects': projects,
+        'tasks': tasks,
+        'total_projects': projects.count(),
+        'total_tasks': tasks.count(),
+        'completed_tasks': tasks.filter(status='done').count(),
+        'todo_tasks': tasks.filter(status='todo').count(),
+        'inprogress_tasks': tasks.filter(status='inprogress').count(),
+    }
     return render(request, 'tasks/dashboard.html', context)
 
 @login_required
