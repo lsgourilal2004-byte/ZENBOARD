@@ -158,3 +158,19 @@ class TaskDetailAPI(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Task.objects.filter(project__owner=self.request.user)
+def get_queryset(self):
+        return Task.objects.filter(project__owner=self.request.user)
+
+
+@login_required
+def kanban(request):
+    todo_tasks = Task.objects.filter(project__owner=request.user, status='todo')
+    inprogress_tasks = Task.objects.filter(project__owner=request.user, status='inprogress')
+    done_tasks = Task.objects.filter(project__owner=request.user, status='done')
+    context = {
+        'todo_tasks': todo_tasks,
+        'inprogress_tasks': inprogress_tasks,
+        'done_tasks': done_tasks,
+    }
+    return render(request, 'tasks/kanban.html', context)
+        

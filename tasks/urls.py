@@ -19,10 +19,11 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-    
+
     # API
     path('api/projects/', views.ProjectListCreateAPI.as_view(), name='api_projects'),
     path('api/projects/<int:pk>/', views.ProjectDetailAPI.as_view(), name='api_project_detail'),
     path('api/tasks/', views.TaskListCreateAPI.as_view(), name='api_tasks'),
     path('api/tasks/<int:pk>/', views.TaskDetailAPI.as_view(), name='api_task_detail'),
+    path('Kanban/', views.kanban, name='kanban'),
 ]

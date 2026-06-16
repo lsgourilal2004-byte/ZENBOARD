@@ -13,6 +13,7 @@
             <a href="{% url 'dashboard' %}" class="hover:text-purple-200 transition font-medium">Dashboard</a>
             <a href="{% url 'project_list' %}" class="hover:text-purple-200 transition font-medium">Projects</a>
             <a href="{% url 'task_list' %}" class="hover:text-purple-200 transition font-medium">Tasks</a>
+            <a href="{% url 'kanban' %}" class="hover:text-purple-200 transition font-medium">Kanban</a>
             {% if user.is_authenticated %}
                 <span class="text-purple-200 text-sm">Hi, {{ user.username }} 👋</span>
                 <a href="{% url 'logout' %}" class="bg-white text-purple-700 px-4 py-1 rounded-full font-semibold hover:bg-purple-100 transition">Logout</a>
