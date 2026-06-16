@@ -1,0 +1,21 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Tasks - Zenboard{% endblock %}
+
+{% block content %}
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold text-gray-700 mb-4">All Tasks</h2>
+        {% for task in tasks %}
+            <div class="border-b py-3">
+                <p class="font-semibold text-gray-700">{{ task.title }}</p>
+                <p class="text-gray-500 text-sm">
+                    Status: {{ task.status }} | Priority: {{ task.priority }}
+                </p>
+            </div>
+        {% empty %}
+            <p class="text-gray-400">No tasks yet</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}
