@@ -22,7 +22,7 @@ def about(request):
     features = ['Task Management (CRUD)', 'Kanban Board', 'Pomodoro Timer', 'REST API', 'Dashboard Charts', 'XP Gamification']
     return render(request, 'tasks/about.html', {'tech_stack': tech_stack, 'features': features})
 
-@login_required
+@login_required(login_url= '/login/')
 def dashboard(request):
     projects = Project.objects.filter(owner=request.user)
     tasks = Task.objects.filter(project__owner=request.user)
@@ -203,7 +203,7 @@ def kanban(request):
     }
     return render(request, 'tasks/kanban.html', context)
     
-
+@login_required
 def pomodoro(request):
     tasks = Task.objects.filter(assigned_to=request.user)
     sessions = PomodoroSession.objects.filter(user=request.user).order_by('-created_at')[:5]
