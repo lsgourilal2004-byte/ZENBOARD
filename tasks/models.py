@@ -42,3 +42,15 @@ class PomodoroSession(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.created_at.strftime('%d %b %Y')}"
+class UserProfile(models.Model):
+        user = models.OneToOneField(User, on_delete=models.CASCADE)
+        xp = models.IntegerField(default=0)
+        level = models.IntegerField(default=1)
+
+        def add_xp(self, points):
+            self.xp += points
+            self.level = (self.xp // 100) + 1
+            self.save()
+
+            def __str__(self):
+                return f"{self.user.username} - Level {self.level}"

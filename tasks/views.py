@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from .models import Project, Task, PomodoroSession
+from .models import Project, Task, PomodoroSession, UserProfile
 from rest_framework import generics, permissions
 from .serializers import ProjectSerializer, TaskSerializer
 
@@ -26,6 +26,7 @@ def about(request):
 def dashboard(request):
     projects = Project.objects.filter(owner=request.user)
     tasks = Task.objects.filter(project__owner=request.user)
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
     context = {
         'projects': projects,
         'tasks': tasks,
@@ -34,6 +35,12 @@ def dashboard(request):
         'completed_tasks': tasks.filter(status='done').count(),
         'todo_tasks': tasks.filter(status='todo').count(),
         'inprogress_tasks': tasks.filter(status='inprogress').count(),
+        'high': tasks.filter(priority='high').count(),
+        'medium': tasks.filter(priority='medium').count(),
+        'low': tasks.filter(priority='low').count(),
+        'xp': profile.xp,
+        'level': profile.level,
+        'xp_progress': (profile.xp % 100),
     }
     return render(request, 'tasks/dashboard.html', context)
 
@@ -133,6 +140,12 @@ def task_edit(request, pk):
         task.deadline = request.POST.get('deadline') or None
         task.project = get_object_or_404(Project, id=request.POST['project'], owner=request.user)
         task.save()
+        # Add XP when task is done
+        if task.status == 'done':
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
+            profile.add_xp(10)
+        
+        return redirect('task_list')
         return redirect('task_list')
     return render(request, 'tasks/task_form.html', {'action': 'Edit', 'task': task, 'projects': projects})
 
