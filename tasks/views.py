@@ -6,6 +6,22 @@ from .models import Project, Task
 from rest_framework import generics, permissions
 from .serializers import ProjectSerializer, TaskSerializer
 
+def home(request):
+    features = [
+        {'icon': '📋', 'title': 'Task Manager', 'description': 'Create, organize, and track tasks with priorities and deadlines.'},
+        {'icon': '🗂️', 'title': 'Kanban Board', 'description': 'Visualize workflow with drag-and-drop cards.'},
+        {'icon': '🍅', 'title': 'Pomodoro Timer', 'description': 'Stay focused with 25-min sessions and 5-min breaks.'},
+        {'icon': '⚡', 'title': 'XP & Gamification', 'description': 'Earn XP for completing tasks and level up.'},
+        {'icon': '📊', 'title': 'Dashboard Charts', 'description': 'Visualize your productivity with beautiful charts.'},
+        {'icon': '🔒', 'title': 'Secure & Private', 'description': 'Built with Django\'s secure authentication system.'},
+    ]
+    return render(request, 'tasks/home.html', {'features': features})
+
+def about(request):
+    tech_stack = ['Python & Django', 'Django REST Framework', 'SQLite', 'HTML5 / CSS3 / Tailwind', 'JavaScript', 'Git & GitHub']
+    features = ['Task Management (CRUD)', 'Kanban Board', 'Pomodoro Timer', 'REST API', 'Dashboard Charts', 'XP Gamification']
+    return render(request, 'tasks/about.html', {'tech_stack': tech_stack, 'features': features})
+
 @login_required
 def dashboard(request):
     projects = Project.objects.filter(owner=request.user)

@@ -1,0 +1,82 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}About - ZenBoard{% endblock %}
+
+{% block content %}
+
+<section class="max-w-5xl mx-auto px-6 py-16">
+
+  <!-- About Hero -->
+  <div class="text-center mb-14">
+    <span class="inline-block bg-purple-900 text-purple-300 text-sm px-4 py-1 rounded-full mb-4">👨‍💻 About This Project</span>
+    <h1 class="text-4xl font-extrabold text-white mb-4">
+      Built with <span class="text-purple-400">passion</span> & Python
+    </h1>
+    <p class="text-gray-400 max-w-xl mx-auto leading-relaxed">
+      ZenBoard is a full-stack productivity web app showcasing real-world Django development skills.
+    </p>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+    <!-- Developer Card -->
+    <div class="bg-purple-950 border border-purple-700 rounded-2xl p-6 text-center hover:border-purple-500 transition">
+      <div class="text-5xl mb-3">👤</div>
+      <h2 class="text-white font-bold text-xl mb-1">LS Gourilal</h2>
+      <p class="text-purple-400 text-sm mb-3">Full-Stack Developer · Trivandrum, Kerala</p>
+      <p class="text-gray-400 text-sm leading-relaxed mb-5">
+        B.Tech CSE Graduate with a passion for building clean, functional web applications using Python and Django.
+      </p>
+      <div class="flex justify-center gap-3 flex-wrap">
+        <a href="https://github.com/lsgourilal2004-byte" target="_blank"
+           class="bg-purple-900 border border-purple-600 text-purple-300 text-sm px-4 py-2 rounded-lg hover:bg-purple-800 transition">
+          🐙 GitHub
+        </a>
+        <a href="https://www.behance.net/gallery/250802035" target="_blank"
+           class="bg-purple-900 border border-purple-600 text-purple-300 text-sm px-4 py-2 rounded-lg hover:bg-purple-800 transition">
+          🎨 Behance
+        </a>
+      </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="bg-purple-950 border border-purple-700 rounded-2xl p-6 hover:border-purple-500 transition">
+      <h2 class="text-white font-semibold text-lg mb-4">🛠️ Tech Stack</h2>
+      <ul class="space-y-3">
+        {% for tech in tech_stack %}
+        <li class="flex items-center gap-3 text-gray-300 text-sm">
+          <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+          {{ tech }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Features -->
+    <div class="bg-purple-950 border border-purple-700 rounded-2xl p-6 hover:border-purple-500 transition">
+      <h2 class="text-white font-semibold text-lg mb-4">✨ Features</h2>
+      <ul class="space-y-3">
+        {% for feature in features %}
+        <li class="flex items-center gap-3 text-gray-300 text-sm">
+          <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+          {{ feature }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Why ZenBoard -->
+    <div class="bg-purple-950 border border-purple-700 rounded-2xl p-6 hover:border-purple-500 transition">
+      <h2 class="text-white font-semibold text-lg mb-4">🎯 Why ZenBoard?</h2>
+      <p class="text-gray-400 text-sm leading-relaxed">
+        ZenBoard was built to solve a common problem — staying focused and organized while juggling multiple tasks.
+        The name "Zen" reflects the calm, distraction-free experience the app aims to provide,
+        while "Board" represents the visual task management system at its core.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
