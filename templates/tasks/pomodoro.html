@@ -1,0 +1,141 @@
+{% extends 'tasks/base.html' %}
+
+{% block title %}Pomodoro Timer - ZenBoard{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-6 py-10">
+
+  <!-- Header -->
+  <div class="text-center mb-10">
+    <h1 class="text-4xl font-bold text-white mb-2">🍅 Pomodoro Timer</h1>
+    <p class="text-gray-400">Stay focused. Work 25 mins, break 5 mins.</p>
+  </div>
+
+  <!-- Timer Card -->
+  <div class="bg-purple-950 border border-purple-700 rounded-2xl p-10 text-center mb-8">
+
+    <!-- Mode Label -->
+    <div id="mode-label" class="text-purple-400 font-semibold text-lg mb-4">🎯 Focus Mode</div>
+
+    <!-- Timer Display -->
+    <div id="timer" class="text-8xl font-extrabold text-white mb-8 tracking-widest">25:00</div>
+
+    <!-- Task Selector -->
+    <div class="mb-6">
+      <select id="task-select" class="bg-purple-900 border border-purple-600 text-white rounded-xl px-4 py-2 w-full max-w-sm">
+        <option value="">-- Select a task (optional) --</option>
+        {% for task in tasks %}
+        <option value="{{ task.id }}">{{ task.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-center gap-4 flex-wrap">
+      <button onclick="startTimer()" id="start-btn"
+        class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition">
+        ▶ Start
+      </button>
+      <button onclick="pauseTimer()" id="pause-btn"
+        class="bg-purple-800 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition">
+        ⏸ Pause
+      </button>
+      <button onclick="resetTimer()"
+        class="bg-gray-700 hover:bg-gray-600 text-white font-semibold px-8 py-3 rounded-xl transition">
+        ↺ Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Session History -->
+  <div class="bg-purple-950 border border-purple-700 rounded-2xl p-6">
+    <h2 class="text-white font-semibold text-xl mb-4">📋 Recent Sessions</h2>
+    {% if sessions %}
+    <div class="space-y-3">
+      {% for session in sessions %}
+      <div class="flex items-center justify-between bg-purple-900 border border-purple-700 rounded-xl px-4 py-3">
+        <div>
+          <span class="text-white text-sm font-medium">
+            {{ session.task.title|default:"No task" }}
+          </span>
+          <span class="text-gray-400 text-xs ml-2">{{ session.created_at|date:"d M Y, H:i" }}</span>
+        </div>
+        <span class="{% if session.completed %}text-green-400{% else %}text-red-400{% endif %} text-sm font-semibold">
+          {% if session.completed %}✅ Done{% else %}❌ Incomplete{% endif %}
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-400 text-sm">No sessions yet. Start your first Pomodoro! 🍅</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Timer JavaScript -->
+<script>
+  let timeLeft = 25 * 60;
+  let timerInterval = null;
+  let isBreak = false;
+  let isRunning = false;
+
+  function updateDisplay() {
+    const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+    const secs = (timeLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timer').textContent = `${mins}:${secs}`;
+  }
+
+  function startTimer() {
+    if (isRunning) return;
+    isRunning = true;
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateDisplay();
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        isRunning = false;
+        if (!isBreak) {
+          saveSession(true);
+          alert('🎉 Focus session done! Take a 5 min break.');
+          isBreak = true;
+          timeLeft = 5 * 60;
+          document.getElementById('mode-label').textContent = '☕ Break Time';
+        } else {
+          alert('✅ Break over! Ready to focus again?');
+          isBreak = false;
+          timeLeft = 25 * 60;
+          document.getElementById('mode-label').textContent = '🎯 Focus Mode';
+        }
+        updateDisplay();
+      }
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    isBreak = false;
+    timeLeft = 25 * 60;
+    document.getElementById('mode-label').textContent = '🎯 Focus Mode';
+    updateDisplay();
+  }
+
+  function saveSession(completed) {
+    const taskId = document.getElementById('task-select').value;
+    fetch("{% url 'save_pomodoro' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: `task_id=${taskId}&completed=${completed}`
+    });
+  }
+</script>
+
+{% endblock %}

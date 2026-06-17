@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.decorators import login_required
-from .models import Project, Task
+from .models import Project, Task, PomodoroSession
 from rest_framework import generics, permissions
 from .serializers import ProjectSerializer, TaskSerializer
 
@@ -189,4 +189,22 @@ def kanban(request):
         'done_tasks': done_tasks,
     }
     return render(request, 'tasks/kanban.html', context)
+    
+
+def pomodoro(request):
+    tasks = Task.objects.filter(assigned_to=request.user)
+    sessions = PomodoroSession.objects.filter(user=request.user).order_by('-created_at')[:5]
+    return render(request, 'tasks/pomodoro.html', {'tasks': tasks, 'sessions': sessions})
+
+def save_pomodoro(request):
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        completed = request.POST.get('completed') == 'true'
+        task = Task.objects.get(id=task_id) if task_id else None
+        PomodoroSession.objects.create(
+            user=request.user,
+            task=task,
+            completed=completed
+        )
+        return JsonResponse({'status': 'saved'})
         

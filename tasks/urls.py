@@ -28,4 +28,7 @@ urlpatterns = [
     path('api/tasks/', views.TaskListCreateAPI.as_view(), name='api_tasks'),
     path('api/tasks/<int:pk>/', views.TaskDetailAPI.as_view(), name='api_task_detail'),
     path('Kanban/', views.kanban, name='kanban'),
+    path('pomodoro/', views.pomodoro, name='pomodoro'),
+     path('pomodoro/save/', views.save_pomodoro, name='save_pomodoro'),
+
 ]
